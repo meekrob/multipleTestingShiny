@@ -7,6 +7,18 @@ do_t_test_on_two_rnorm_samples = function(n1,n2,mu1=0,mu2=0,sd1=1,sd2=1) {
   
 }
 
+simulate_poisson_tests = function(k,lambda_null,lambda_alternative) {
+  poisson_variates = rpois(k, lambda_alternative);
+  p = ppois(poisson_variates, lambda_null,lower.tail=F);
+  return(data.frame(variates=poisson_variates, p=p));
+}
+
+mix_positive_and_negative_tests = function(pos,neg) {
+  df_pos = data.frame(pos, real=T);
+  df_neg = data.frame(neg, real=F);
+  return(rbind(df_pos, df_neg));
+}
+
 discrim =  function(df,alpha=0.05,fun=function(x) {1-pnorm(x)}) { 
 
   
