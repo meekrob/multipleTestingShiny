@@ -14,9 +14,30 @@ simulate_poisson_tests = function(k,lambda_null,lambda_alternative) {
 }
 
 mix_positive_and_negative_tests = function(pos,neg) {
-  df_pos = data.frame(pos, real=T);
-  df_neg = data.frame(neg, real=F);
+  df_pos = data.frame();
+  df_neg = data.frame();
+  if(! is.null(pos)) {df_pos = data.frame(pos, real=T);}
+  if(! is.null(neg)) {df_neg = data.frame(neg, real=F);}
   return(rbind(df_pos, df_neg));
+}
+
+ppv = function(df, alpha=.05) {
+  res = data.frame();
+  for (p.adjust.method in p.adjust.methods) {
+    padj = p.adjust(df$p, method=p.adjust.method);
+    P=sum(padj < alpha);
+    N=sum(padj >= alpha);
+    TP=sum(padj[df$real==T] < alpha);
+    FP=sum(padj[df$real==F] < alpha);
+    TN=sum(padj[df$real==F] >= alpha);
+    FN=sum(padj[df$real==T] >= alpha);
+    FPrate=FP/(FP+TP);
+    FNrate=FN/(TN+FN);
+    
+    rdf = data.frame(method=p.adjust.method,P,N,FPrate,FNrate,TP,FP,TN,FN);
+    res=rbind(res,rdf);
+  }
+  return(res);
 }
 
 discrim =  function(df,alpha=0.05,fun=function(x) {1-pnorm(x)}) { 
