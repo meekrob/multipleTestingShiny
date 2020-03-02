@@ -1,3 +1,12 @@
+do_t_test_on_two_rnorm_samples = function(n1,n2,mu1=0,mu2=0,sd1=1,sd2=1) {
+  x1 = rnorm(n1,mu1,sd1);
+  x2 = rnorm(n2,mu2,sd2);
+  rval = t.test(x1,x2, alternative="greater");
+   
+  return(data.frame(p=rval$p.value, xbar=rval$estimate[[1]],ybar=rval$estimate[[2]]));
+  
+}
+
 discrim =  function(df,alpha=0.05,fun=function(x) {1-pnorm(x)}) { 
 
   
