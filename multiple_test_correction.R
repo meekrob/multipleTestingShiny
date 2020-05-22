@@ -13,6 +13,32 @@ simulate_poisson_tests = function(k,lambda_null,lambda_alternative) {
   return(data.frame(variates=poisson_variates, p=p));
 }
 
+fiftyStudents <- function() {
+  alpha_reject = 0.025
+  fp=replicate(50,t.test(rnorm(10),rnorm(10))$p.value)
+  as_tibble(fp) %>% mutate(rejectH0=value <= alpha_reject, 
+                           students=as_factor(randomnames)) -> allLabs
+  
+  ggplot(allLabs, aes(y=students,x=value,color=rejectH0)) +
+    theme_classic() + 
+    geom_point() + 
+    scale_color_manual(values=c("#606060","red")) +
+    theme(axis.title = element_blank()) +
+    geom_vline(xintercept=seq(from=.0,to=1,by=.05),size=.05) +
+    labs(title = expression(paste(bold("50 students"), " test the same gene")),
+       caption = paste("They reject on α=", alpha_reject)) +
+    scale_x_continuous(expand=c(0.01,0.01))
+  
+  fp=replicate(50,t.test(rnorm(10),rnorm(10))$p.value)
+  as_tibble(fp) %>% mutate(rejectH0=value <= alpha_reject, 
+                           students=as_factor(randomnames)) -> allLabs 
+  histbreaks = seq(from=.0,to=1,by=alpha_reject)
+  ggplot(allLabs, aes(x=value)) + 
+    geom_histogram(data=subset(allLabs,value<=alpha_reject),breaks=histbreaks,center=0, fill="red") + 
+    geom_histogram(data=subset(allLabs,value>alpha_reject),breaks=histbreaks,center=0, fill="#606060") 
+    
+}
+
 mix_positive_and_negative_tests = function(pos,neg) {
   df_pos = data.frame();
   df_neg = data.frame();
