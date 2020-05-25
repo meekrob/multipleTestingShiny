@@ -38,32 +38,38 @@ same paper and gave them a gene to test for effect on worm metabolic function."
             "mean worm length (wildtype)",
             min = 5,
             max = 10,
-            value = 7
+            value = 7, step = .5
         ),
         sliderInput(
             "wildtype_sd",
             "standard deviation of worm length (wildtype)",
             min = 1,
             max = 5,
-            value = 2
+            value = 2, step = .5
         ),
         width = 6
     ),
     column(
         h3("Population distribution of wildtype worm lengths."),
-        plotOutput("populationDistribtionPlot"),
+        plotOutput("populationDistribtionPlot", height="250px"),
         width = 6
     )),
     fluidRow(
         column(
-        h3("The fifty students each measure body lengths of 5", em('nres-1'), 
-           "knockout worms against 10 wildtype worms."),
+        h3(strong("False positives:"), "The fifty students each measure body lengths of", em('nres-1'), 
+           "knockout worms versus wildtype worms."),
         p("They do a two-sample t-test on the two groups. Since", em('nres-1'), 
           "has no effect, we'll draw its sample from the same population that wildtype 
-          is drawn from. Shown the graph above."), width=12)
+          is drawn from. Shown the graph above."), 
+        width=12)
     ),
     fluidRow(
-        column(plotOutput("fiftyStudentsPlot"), width=12)
+        column(4,sliderInput("samples_nres", "Number of nres-1 KO worms measured",min=5, value=5, max=10)),
+        column(4,sliderInput("samples_wt", "Number of wild-type worms measured",min=5, value=5, max=10)),
+        column(4,selectInput("alpha_reject", "p-value threshold",selected=.1,choices=c(".01"=.01, ".05"=.05, ".1"=.1)))
+    ),
+    fluidRow(
+        column(plotOutput("fiftyStudentsPlot", height="500px"), width=12)
     ),
     fluidRow(
         column(p("aftermath"),width=12)
