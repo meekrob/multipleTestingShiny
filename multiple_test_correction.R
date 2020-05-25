@@ -15,31 +15,40 @@ simulate_poisson_tests = function(k,lambda_null,lambda_alternative) {
   return(data.frame(variates=poisson_variates, p=p));
 }
 
-fiftyStudents <- function() {
-  randomnames=strsplit(readLines("randomnames.txt"), " ")[[1]]
-  alpha_reject = 0.025
-  fp=replicate(50,t.test(rnorm(10),rnorm(10))$p.value)
+fiftyStudents <- function(wt_mu, wt_sd) {
+  randomnames=strsplit(readLines("../randomnames.txt"), " ")[[1]]
+  alpha_reject = 0.05
+  fp=replicate(50,t.test(rnorm(5, wt_mu, wt_sd),rnorm(10,wt_mu,wt_sd))$p.value)
   as_tibble(fp) %>% mutate(rejectH0=value <= alpha_reject, 
                            students=as.factor(randomnames)) -> allLabs
   
-  ggplot(allLabs, aes(y=students,x=value,color=rejectH0)) +
-    theme_classic() + 
+  plt <- ggplot(allLabs, aes(y=students,x=value,color=rejectH0)) +
+   
+    geom_rect(xmin=0,xmax=alpha_reject,ymin=0,ymax=Inf,fill='white', color='red',alpha=.1) +
     geom_point() + 
     scale_color_manual(values=c("#606060","red")) +
-    theme(axis.title = element_blank()) +
+    theme_classic() +
+    theme(
+          axis.text=element_text(size = rel(.99)),
+          axis.text.y = element_text(color=ifelse(allLabs$rejectH0,'red','black'))
+          ) +
     geom_vline(xintercept=seq(from=.0,to=1,by=.05),size=.05) +
-    labs(title = expression(paste(bold("50 students"), " test the same gene")),
-       caption = paste("They reject on α=", alpha_reject)) +
+    labs(x="p-value") +
     scale_x_continuous(expand=c(0.01,0.01))
-  
-  fp=replicate(50,t.test(rnorm(10),rnorm(10))$p.value)
-  as_tibble(fp) %>% mutate(rejectH0=value <= alpha_reject, 
-                           students=as.factor(randomnames)) -> allLabs 
-  histbreaks = seq(from=.0,to=1,by=alpha_reject)
-  ggplot(allLabs, aes(x=value)) + 
-    geom_histogram(data=subset(allLabs,value<=alpha_reject),breaks=histbreaks,center=0, fill="red") + 
-    geom_histogram(data=subset(allLabs,value>alpha_reject),breaks=histbreaks,center=0, fill="#606060") 
-    
+  print(plt)
+}
+
+fifty_students_pval_histogram <- function()
+{
+  if (FALSE){  # histogram of p-values
+    fp=replicate(50,t.test(rnorm(10),rnorm(10))$p.value)
+    as_tibble(fp) %>% mutate(rejectH0=value <= alpha_reject, 
+                             students=as.factor(randomnames)) -> allLabs 
+    histbreaks = seq(from=.0,to=1,by=alpha_reject)
+    ggplot(allLabs, aes(x=value)) + 
+      geom_histogram(data=subset(allLabs,value<=alpha_reject),breaks=histbreaks,center=0, fill="red") + 
+      geom_histogram(data=subset(allLabs,value>alpha_reject),breaks=histbreaks,center=0, fill="#606060") 
+  }
 }
 
 mix_positive_and_negative_tests = function(pos,neg) {

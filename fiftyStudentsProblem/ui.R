@@ -54,20 +54,18 @@ same paper and gave them a gene to test for effect on worm metabolic function."
         plotOutput("populationDistribtionPlot"),
         width = 6
     )),
-    
-    # Sidebar with a slider input for number of bins
-    sidebarLayout(
-        sidebarPanel(
-            sliderInput("bins",
-                        "Number of bins:",
-                        min = 1,
-                        max = 50,
-                        value = 30)
-        ),
-
-        # Show a plot of the generated distribution
-        mainPanel(
-            plotOutput("distPlot")
-        )
+    fluidRow(
+        column(
+        h3("The fifty students each measure body lengths of 5", em('nres-1'), 
+           "knockout worms against 10 wildtype worms."),
+        p("They do a two-sample t-test on the two groups. Since", em('nres-1'), 
+          "has no effect, we'll draw its sample from the same population that wildtype 
+          is drawn from. Shown the graph above."), width=12)
+    ),
+    fluidRow(
+        column(plotOutput("fiftyStudentsPlot"), width=12)
+    ),
+    fluidRow(
+        column(p("aftermath"),width=12)
     )
 ))

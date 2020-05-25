@@ -8,6 +8,8 @@
 #
 
 library(shiny)
+library(ggplot2)
+source('../multiple_test_correction.R')
 
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {
@@ -17,6 +19,9 @@ shinyServer(function(input, output) {
         p <- ggplot(data = data.frame(x = 0), mapping = aes(x = x))
         wt = function(x) { dnorm(x,input$wildtype_mean,input$wildtype_sd)}
         p + stat_function(fun = wt) + xlim(-20,20)
+    })
+    output$fiftyStudentsPlot <- renderPlot({
+        print(fiftyStudents(input$wildtype_mean,input$wildtype_sd))
     })
 
 })
