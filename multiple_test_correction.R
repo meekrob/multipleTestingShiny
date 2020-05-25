@@ -1,3 +1,5 @@
+require('dplyr')
+
 do_t_test_on_two_rnorm_samples = function(n1,n2,mu1=0,mu2=0,sd1=1,sd2=1) {
   x1 = rnorm(n1,mu1,sd1);
   x2 = rnorm(n2,mu2,sd2);
@@ -14,10 +16,11 @@ simulate_poisson_tests = function(k,lambda_null,lambda_alternative) {
 }
 
 fiftyStudents <- function() {
+  randomnames=strsplit(readLines("randomnames.txt"), " ")[[1]]
   alpha_reject = 0.025
   fp=replicate(50,t.test(rnorm(10),rnorm(10))$p.value)
   as_tibble(fp) %>% mutate(rejectH0=value <= alpha_reject, 
-                           students=as_factor(randomnames)) -> allLabs
+                           students=as.factor(randomnames)) -> allLabs
   
   ggplot(allLabs, aes(y=students,x=value,color=rejectH0)) +
     theme_classic() + 
@@ -31,7 +34,7 @@ fiftyStudents <- function() {
   
   fp=replicate(50,t.test(rnorm(10),rnorm(10))$p.value)
   as_tibble(fp) %>% mutate(rejectH0=value <= alpha_reject, 
-                           students=as_factor(randomnames)) -> allLabs 
+                           students=as.factor(randomnames)) -> allLabs 
   histbreaks = seq(from=.0,to=1,by=alpha_reject)
   ggplot(allLabs, aes(x=value)) + 
     geom_histogram(data=subset(allLabs,value<=alpha_reject),breaks=histbreaks,center=0, fill="red") + 
