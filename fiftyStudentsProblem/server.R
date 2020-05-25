@@ -18,10 +18,10 @@ shinyServer(function(input, output) {
         # provide a dummy dataset
         p <- ggplot(data = data.frame(x = 0), mapping = aes(x = x))
         wt = function(x) { dnorm(x,input$wildtype_mean,input$wildtype_sd)}
-        p + stat_function(fun = wt) + xlim(-20,20)
-    })
+        p + stat_function(fun = wt) + xlim(0,20)
+    },height=100, width=200)
     output$fiftyStudentsPlot <- renderPlot({
         print(fiftyStudents(input$wildtype_mean,input$wildtype_sd))
-    })
+    },height=500)
 
 })

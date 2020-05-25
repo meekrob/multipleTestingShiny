@@ -29,11 +29,10 @@ fiftyStudents <- function(wt_mu, wt_sd) {
     scale_color_manual(values=c("#606060","red")) +
     theme_classic() +
     theme(
-          axis.text=element_text(size = rel(.99)),
           axis.text.y = element_text(color=ifelse(allLabs$rejectH0,'red','black'))
           ) +
     geom_vline(xintercept=seq(from=.0,to=1,by=.05),size=.05) +
-    labs(x="p-value") +
+    labs(x="p-value", y="The 50 students") +
     scale_x_continuous(expand=c(0.01,0.01))
   print(plt)
 }
