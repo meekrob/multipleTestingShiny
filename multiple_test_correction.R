@@ -15,10 +15,14 @@ simulate_poisson_tests = function(k,lambda_null,lambda_alternative) {
   return(data.frame(variates=poisson_variates, p=p));
 }
 
-fiftyStudents <- function(wt_mu, wt_sd) {
+fiftyStudents <- function(wt_mu, wt_sd,test_n=5, wt_n=10,alpha_reject=0.05) {
   randomnames=strsplit(readLines("../randomnames.txt"), " ")[[1]]
-  alpha_reject = 0.05
-  fp=replicate(50,t.test(rnorm(5, wt_mu, wt_sd),rnorm(10,wt_mu,wt_sd))$p.value)
+  
+  fp=replicate(50,
+         t.test(
+            rnorm(test_n, wt_mu, wt_sd),
+            rnorm(wt_n,   wt_mu, wt_sd)
+            )$p.value)
   as_tibble(fp) %>% mutate(rejectH0=value <= alpha_reject, 
                            students=as.factor(randomnames)) -> allLabs
   

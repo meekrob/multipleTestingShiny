@@ -13,7 +13,7 @@ source('../multiple_test_correction.R')
 
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {
-
+    resample <- eventReactive(input$resample,{})
     output$populationDistribtionPlot <- renderPlot({
         # provide a dummy dataset
         p <- ggplot(data = data.frame(x = 0), mapping = aes(x = x))
@@ -22,7 +22,13 @@ shinyServer(function(input, output) {
                                             qnorm(.999, input$wildtype_mean,input$wildtype_sd))
     },height=250, width=400)
     output$fiftyStudentsPlot <- renderPlot({
-        print(fiftyStudents(input$wildtype_mean,input$wildtype_sd))
+        nothing=resample()
+        print(
+            fiftyStudents(input$wildtype_mean,
+                          input$wildtype_sd, 
+                          input$samples_nres,
+                          input$samples_wt,
+                          as.numeric(input$alpha_reject)))
     },height=500)
 
 })

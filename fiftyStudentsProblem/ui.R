@@ -64,9 +64,13 @@ same paper and gave them a gene to test for effect on worm metabolic function."
         width=12)
     ),
     fluidRow(
+        column(2,actionButton("resample", "Make them WORK", icon("microscope")
+        )),
         column(4,sliderInput("samples_nres", "Number of nres-1 KO worms measured",min=5, value=5, max=10)),
         column(4,sliderInput("samples_wt", "Number of wild-type worms measured",min=5, value=5, max=10)),
-        column(4,selectInput("alpha_reject", "p-value threshold",selected=.1,choices=c(".01"=.01, ".05"=.05, ".1"=.1)))
+        column(2,selectInput("alpha_reject", "p-value threshold",selected=.05,choices=c(".01"=.01, ".05"=.05, ".1"=.1),
+                             width="75px"))
+        
     ),
     fluidRow(
         column(plotOutput("fiftyStudentsPlot", height="500px"), width=12)
