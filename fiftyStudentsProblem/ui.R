@@ -17,19 +17,20 @@ shinyUI(fluidPage(
         br(),
         p(
             "There are 50 students in labs across the world whose advisors read the
-same paper and gave them a gene to test for effect on worm metabolic function."
+same paper and gave them a gene to test."
         ),
-        br(),
         p(
-            "What we know, that they don't, is that the gene,",
+            "It is",
             em('nres-1,'),
-            "has
-          no effect on metabolism, measured by body length.",
-            em("Nevertheless,"), "the fifty fledgling scientists proceed with their investigation."
+            "and despite indications,", em("it has no effect on worm length."),
+        ),
+        p(
+            "Nevertheless, the fifty fledgling scientists proceed with their investigation, each unaware of the other 49."
         ),
         hr(),
-        width = 12 # column width
-    ) # end column
+        width = 8 # column width
+    ), # end column
+    column(img(src="advisor_flipped.png",height="100"),p('"Test', em("nres-1"),'"'), width=4),
     ), # end fluidRow
     fluidRow(column(
         h3("We'll simulate wildtype worm length using a normal distribution."),
@@ -47,11 +48,14 @@ same paper and gave them a gene to test for effect on worm metabolic function."
             max = 5,
             value = 2, step = .5
         ),
+        p("These controls determine the (theoretical) population that wildtype samples are drawn from."), 
         width = 6
     ),
     column(
-        h3("Population distribution of wildtype worm lengths."),
+        h3("Wildtype worm lengths."),
         plotOutput("populationDistribtionPlot", height="250px"),
+        
+        h4("Main idea: experiments on non-effect genes will also product samples from this distribution."),
         width = 6
     )),
     fluidRow(
@@ -64,12 +68,12 @@ same paper and gave them a gene to test for effect on worm metabolic function."
         width=12)
     ),
     fluidRow(
-        column(2,actionButton("resample", "Make them WORK", icon("microscope")
-        )),
-        column(4,sliderInput("samples_nres", "Number of nres-1 KO worms measured",min=5, value=5, max=10)),
-        column(4,sliderInput("samples_wt", "Number of wild-type worms measured",min=5, value=5, max=10)),
-        column(2,selectInput("alpha_reject", "p-value threshold",selected=.05,choices=c(".01"=.01, ".05"=.05, ".1"=.1),
-                             width="75px"))
+        #column(4,sliderInput("samples_nres", "Number of nres-1 KO worms measured",min=5, value=5, max=10)),
+        #column(4,sliderInput("samples_wt", "Number of wild-type worms measured",min=5, value=5, max=10)),
+        column(4,selectInput("alpha_reject", "p-value threshold",selected=.05,choices=c(".01"=.01, ".05"=.05, ".1"=.1),
+                             width="75px")),
+        column(4,actionButton("resample", "RUN experiments", icon("microscope")
+        ))
         
     ),
     fluidRow(

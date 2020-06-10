@@ -1,4 +1,10 @@
-require('dplyr')
+library('dplyr')
+
+library('ggtext') # for element_markdown, to color the
+                  # axis labels (the student's name) 
+                  # in fiftyStudents()
+
+library('glue')   # to interpolate a value into html via dplyr
 
 do_t_test_on_two_rnorm_samples = function(n1,n2,mu1=0,mu2=0,sd1=1,sd2=1) {
   x1 = rnorm(n1,mu1,sd1);
@@ -15,25 +21,36 @@ simulate_poisson_tests = function(k,lambda_null,lambda_alternative) {
   return(data.frame(variates=poisson_variates, p=p));
 }
 
-fiftyStudents <- function(wt_mu, wt_sd,test_n=5, wt_n=10,alpha_reject=0.05) {
+fiftyStudents <- function(wt_mu, wt_sd,test_n=10, wt_n=10,alpha_reject=0.05) {
+  cat("getting names\n")
   randomnames=strsplit(readLines("../randomnames.txt"), " ")[[1]]
   
+  randomnames_factors = as.factor(randomnames)
+  cat("test_n: ", test_n, "\nwt_n: ", wt_n,"\n")
   fp=replicate(50,
          t.test(
             rnorm(test_n, wt_mu, wt_sd),
             rnorm(wt_n,   wt_mu, wt_sd)
             )$p.value)
-  as_tibble(fp) %>% mutate(rejectH0=value <= alpha_reject, 
-                           students=as.factor(randomnames)) -> allLabs
+  cat("done replicating.\n")
+  as_tibble(fp) %>% mutate(rejectH0=value <= alpha_reject,
+                           students=randomnames_factors,
+                           students_markdown = ifelse(rejectH0,
+                                                      glue("<span style = 'color: red;'>{randomnames}</span>"),
+                                                      glue("<span style = 'color: black;'>{randomnames}</span>"))
+                           ) -> allLabs
   
-  plt <- ggplot(allLabs, aes(y=students,x=value,color=rejectH0)) +
-   
-    geom_rect(xmin=0,xmax=alpha_reject,ymin=0,ymax=Inf,fill='white', color='red',alpha=.1) +
-    geom_point() + 
-    scale_color_manual(values=c("#606060","red")) +
+  plt <- ggplot(allLabs, aes(y=students_markdown,x=value,color=rejectH0))
+  cat("set up aesthetic\n")
+  plt <- plt + geom_rect(xmin=0,xmax=alpha_reject,ymin=0,ymax=Inf,fill='white', color='red',alpha=.1)
+  cat("grid\n")
+  plt <- plt + geom_point()
+  cat("grid\n")
+  plt <- plt +  scale_color_manual(values=c("#606060","red")) +
     theme_classic() +
     theme(
-          axis.text.y = element_text(color=ifelse(allLabs$rejectH0,'red','black'))
+          #axis.text.y = element_text(color=ifelse(allLabs$rejectH0,'red','black'))
+          axis.text.y = element_markdown()
           ) +
     geom_vline(xintercept=seq(from=.0,to=1,by=.05),size=.05) +
     labs(x="p-value", y="The 50 students") +
