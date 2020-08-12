@@ -29,7 +29,8 @@ shinyServer(function(input, output) {
         progress <- shiny::Progress$new()
         on.exit(progress$close())
         progress$set(message = "Pipetting...", detail="and PCR, and growing worms...", value = 0)
-        nothing=resample() # to initiate the graph (I don't think this works)
+        
+        resample() # makes it reactive
         
         print(
             fiftyStudents(input$wildtype_mean,
