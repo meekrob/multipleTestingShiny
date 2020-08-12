@@ -33,6 +33,10 @@ fiftyStudents <- function(wt_mu, wt_sd,test_n=10, wt_n=10,alpha_reject=0.05) {
             rnorm(wt_n,   wt_mu, wt_sd)
             )$p.value)
   cat("done replicating.\n")
+  
+  # https://stackoverflow.com/questions/59757585/conditional-change-of-axis-text-font-family-and-font-size-creates-unwanted-gap
+  #
+  
   as_tibble(fp) %>% mutate(rejectH0=value <= alpha_reject,
                            students=randomnames_factors,
                            students_markdown = ifelse(rejectH0,

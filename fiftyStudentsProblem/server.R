@@ -28,7 +28,7 @@ shinyServer(function(input, output) {
     output$fiftyStudentsPlot <- renderPlot({
         progress <- shiny::Progress$new()
         on.exit(progress$close())
-        progress$set(message = "Pipetting...", value = 0)
+        progress$set(message = "Pipetting...", detail="and PCR, and growing worms...", value = 0)
         nothing=resample() # to initiate the graph (I don't think this works)
         
         print(
